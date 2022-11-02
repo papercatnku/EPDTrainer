@@ -1,4 +1,4 @@
-# EPDTrainer(Effortless Paradigm Driven Trainer) is a training engine designed for make Training CNN/DL Models easily.
+# EPDTrainer(Effortless Paradigm Driven Trainer) is a training engine designed to make Training CNN/DL Models easier.
 
 ## Content
 - Design Notes
