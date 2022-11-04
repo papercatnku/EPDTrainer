@@ -75,15 +75,15 @@ class trainer_base:
                 self.config[k] = v
 
         # load checkpoint
-
-        if self.config.resume is not None:
-            self.checkpoint = load_resume(config.resume)
-        elif self.config.resume_epoch is not None:
+        self.pretrained = None
+        self.checkpoint = None
+        if self.config.resume_epoch is not None:
             self.config.resume = get_saved_model_path(
                 self.config.save_dir, self.config.resume_epoch)
             self.checkpoint = load_resume(self.config.resume)
-        else:
-            self.checkpoint = None
+        elif self.config.resume is not None:
+            checkpoint = load_resume(self.config.resume)
+            self.pretrained = checkpoint['model_state']
 
         if self.checkpoint:
             self.config.sw.batch_step = self.checkpoint.get(
@@ -118,12 +118,18 @@ class trainer_base:
         if self.config.schema == 'train':
             self.device = torch.device('cuda')
             model = create_model(self.funcs, self.checkpoint)
+
+            if self.pretrained:
+                model.load_state_dict(self.pretrained)
+                pass
             self.model = nn.DataParallel(model).to(self.device)
             self.optimizer = create_optimizer(
                 self.model, self.checkpoint, self.config, self.funcs)
 
         elif self.config.schema == 'eval':
             self.model = create_model(self.funcs, self.checkpoint)
+            if self.pretrained:
+                self.model.load_state_dict(self.pretrained)
 
         else:
             logger.error(f"unsupported schema {self.config.schema}")
