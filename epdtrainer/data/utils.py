@@ -2,6 +2,7 @@ import torch
 import cv2
 from random import shuffle
 import numpy as np
+from tqdm import tqdm
 
 
 class JointDataset(torch.utils.data.Dataset):
@@ -37,6 +38,22 @@ class TsfDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         out_dict = self.tsf(self.ds[idx])
         return out_dict
+
+
+class SeqTsfDataset(torch.torch.utils.data.Dataset):
+    def __init__(self, ds, tsf_seq):
+        self.ds = ds
+        self.tsf_seq = tsf_seq
+        return
+
+    def __len__(self):
+        return len(self.ds)
+
+    def __getitem__(self, idx):
+        out_data = self.ds[idx]
+        for tsf in self.tsf:
+            out_data = tsf(out_data)
+        return out_data
 
 
 def DatasetSplitTrainEval(dataset, eval_ratio=0.1, seed=42):

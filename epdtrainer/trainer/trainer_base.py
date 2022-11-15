@@ -45,15 +45,6 @@ class trainer_base:
         update_dict(self.config, getattr(mod, 'config'))
         update_dict(self.funcs, getattr(mod, 'funcs'))
 
-        save_dir_root = self.config.get('skpt_root', './save')
-        log_dir_root = self.config.get('log_root', './log')
-
-        self.config.save_dir = os.path.join(
-            save_dir_root, self.config.exp_name)
-        self.config.log_dir = os.path.join(log_dir_root, self.config.exp_name)
-
-        setup_log(self.config.log_dir)
-
         # overwrite config from command-line arguments
         args = vars(args)
         for k in [
@@ -73,6 +64,15 @@ class trainer_base:
                 logger.info(
                     f'[W] Overwrite config.{k} from {self.config.get(k)} to {v}')
                 self.config[k] = v
+
+        exp_root = os.path.join(self.config.get(
+            'exp_record_dir', './exp_record'), self.config["exp_name"])
+
+        self.config.save_dir = os.path.join(
+            exp_root, 'ckpt')
+        self.config.log_dir = os.path.join(exp_root, 'log')
+
+        setup_log(self.config.log_dir)
 
         # load checkpoint
         self.pretrained = None

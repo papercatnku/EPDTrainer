@@ -60,17 +60,6 @@ class ConvBN(nn.Sequential):
         )
 
 
-class UpSample(nn.Module):
-
-    def __init__(self, scale_factor=2, mode="bilinear"):
-        super().__init__()
-        self.scale_factor = scale_factor
-        self.mode = mode
-
-    def forward(self, x):
-        return F.interpolate(x, scale_factor=self.scale_factor, mode=self.mode)
-
-
 class SiLU(nn.Module):
     """export-friendly version of nn.SiLU()"""
 

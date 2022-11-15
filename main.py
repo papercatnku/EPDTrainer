@@ -1,5 +1,5 @@
 from args import get_args
-from utils.miscellaneous import load_config
+from epdtrainer.utils.miscellaneous import load_config
 
 
 def main(args):
