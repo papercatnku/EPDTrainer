@@ -65,12 +65,16 @@ class trainer_base:
                     f'[W] Overwrite config.{k} from {self.config.get(k)} to {v}')
                 self.config[k] = v
 
-        exp_root = os.path.join(self.config.get(
-            'exp_record_dir', './exp_record'), self.config["exp_name"])
+        save_dir_root = self.config.get('skpt_root', './save')
+        log_dir_root = self.config.get('log_root', './log')
 
-        self.config.save_dir = os.path.join(
-            exp_root, 'ckpt')
-        self.config.log_dir = os.path.join(exp_root, 'log')
+        rec_dir_root = os.path.join(
+            self.config.get('record_root', './exp_record'),
+            self.config.exp_name
+        )
+
+        self.config.save_dir = os.path.join(rec_dir_root, 'ckpt')
+        self.config.log_dir = os.path.join(rec_dir_root, 'log')
 
         setup_log(self.config.log_dir)
 
