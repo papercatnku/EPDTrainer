@@ -98,7 +98,7 @@ class trainer_static(trainer_base):
                 loss_detail_str = stastics_detail(loss_dict)
 
                 logger.info(
-                    f'train loss:{loss_2backward:>8.5f}, {loss_detail_str} \t[{current:>5d}/{num_items:>5d}'
+                    f'train loss:{loss_2backward:>8.5f}, {loss_detail_str} \t[{current:>5d}/{num_items:>5d}]'
                 )
                 # decode & viz if available
 

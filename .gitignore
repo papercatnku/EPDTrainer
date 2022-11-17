@@ -11,3 +11,4 @@ save/
 *.onnx
 *.pt
 *.pth
+exp_record/

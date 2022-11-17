@@ -25,7 +25,7 @@ def get_args(arg_list=None):
                         default=None, help='batch size of train dataloader')
     parser.add_argument('--resume_epoch', type=int, default=None,
                         help='previous saved epoch to restart from')
-    parser.add_argument('--resume', '-r', type=str, default=None,
+    parser.add_argument('--resume', '-r', type=file_path, default=None,
                         help='path to previous saved model to restart from')
     parser.add_argument('--eval_ratio', type=str,
                         default=None, help='evaluation data ratio')

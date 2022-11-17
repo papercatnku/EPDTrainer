@@ -29,7 +29,7 @@ class trainer_base:
             optimizer='sgd',
             scheduler='onecycle',
             schedule_step_phase='epoch',  # [batch|epoch]
-            learn_rate=1e-2,
+            learn_rate=3e-4,
             epochs=args.epochs,
             use_cuda=torch.cuda.device_count() > 0,  # CUDA_VISIBLE_DEVICES
             sw=EasyDict(
