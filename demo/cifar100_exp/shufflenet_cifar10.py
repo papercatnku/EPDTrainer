@@ -14,7 +14,7 @@ from visualizer.visualizer_base import visualizer_base
 
 from loss import clsification_loss
 from dataloader import create_dataloaders
-from net import creat_cls_inf_net
+from net import shufflenet_cls_prototype
 
 
 config = EasyDict(
@@ -61,7 +61,7 @@ funcs = EasyDict(
 
     # share in train/eval phase
     create_data_loader=lambda x: create_dataloaders(x),
-    create_network=lambda: creat_cls_inf_net(config),
+    create_network=lambda: shufflenet_cls_prototype(config),
     create_losses=lambda x: clsification_loss(),
 
     # desgined to be different in train/eval phase
