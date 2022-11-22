@@ -21,7 +21,5 @@ class evaluator_base:
     def reset(self,):
         return
 
-    def write_tblog(self, sw, tag='eval'):
-        #
-        stastics_to_log = {}
-        return stastics_to_log
+    def write_tblog(self, sw, tag='eval', step=None):
+        return {}

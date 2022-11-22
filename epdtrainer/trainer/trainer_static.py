@@ -101,6 +101,8 @@ class trainer_static(trainer_base):
                     f'train loss:{loss_2backward:>8.5f}, {loss_detail_str} \t[{current:>5d}/{num_items:>5d}]'
                 )
                 # decode & viz if available
+                if (self.train_decoder and self.train_visualizer):
+                    pass
 
             self.cur_iter += 1
 
@@ -196,6 +198,8 @@ class trainer_static(trainer_base):
                 decoded_res = self.validate_decoder(pred_dict)
                 self.validate_evaluator.feed_data(
                     decoded_res, batch_data_dict)
+                if (self.validate_visualizer):
+                    pass
 
         epoch_loss2log = defaultdict(lambda: 0)
 

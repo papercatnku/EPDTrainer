@@ -78,6 +78,11 @@ class trainer_base:
 
         setup_log(self.config.log_dir)
 
+        #
+        import setproctitle
+        setproctitle.setproctitle(f"epdtrainer:{self.config.exp_name}")
+        #
+
         # load checkpoint
         self.pretrained = None
         self.checkpoint = None
