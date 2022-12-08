@@ -6,6 +6,7 @@ from easydict import EasyDict
 import torch
 import torch.nn as nn
 import torchvision
+import numpy as np
 
 
 def load_resume(resume_path):
@@ -24,10 +25,11 @@ def create_model(funcs, checkpoint):
                 new_state[k] = v
         model.load_state_dict(new_state)
     else:
-        import torch.nn.init as tinit
-        for m in model.modules():
-            if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
-                tinit.xavier_normal_(m.weight, gain=0.2)
+        # import torch.nn.init as tinit
+        # for m in model.modules():
+        #     if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
+        #         tinit.xavier_normal_(m.weight, gain=0.2)
+        pass
     return model
 
 
@@ -104,7 +106,7 @@ def get_saved_model_path(save_dir, epoch, tag=''):
 
 def push_cuda_data(X):
     if isinstance(X, torch.Tensor):
-        return X.cuda()
+        return X.cuda(device=0)
     elif isinstance(X, tuple):
         return (push_cuda_data(x) for x in X)
     elif isinstance(X, list):
@@ -126,3 +128,16 @@ def get_cuda_data(X):
         return {k: get_cuda_data(v) for k, v in X.items()}
     else:
         raise TypeError(f'Can not copy data to cuda: {X}')
+
+
+def get_np_data(X):
+    if isinstance(X, torch.Tensor):
+        return X.cpu().numpy()
+    elif isinstance(X, tuple):
+        return (get_cuda_data(x) for x in X)
+    elif isinstance(X, list):
+        return [get_cuda_data(x) for x in X]
+    elif isinstance(X, dict):
+        return {k: get_cuda_data(v) for k, v in X.items()}
+    else:
+        raise TypeError(f'Can not copy data to numpy data: {X}')

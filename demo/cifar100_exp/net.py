@@ -43,7 +43,6 @@ def resne_cls_prototypet(config):
         ]
     )
     return net
-    return net
 
 
 if __name__ == '__main__':

@@ -24,12 +24,13 @@ class imgbase_transform_base:
         rszimg = cv2.resize(srcimg, self.img_wh,
                             interpolation=cv2.INTER_LINEAR)
         if (self.if_gray):
-            outimg = cv2.cvtColor(rszimg, cv2.COLOR_BGR2GRAY)
+            outimg = cv2.cvtColor(rszimg, cv2.COLOR_BGR2GRAY)[None, :, :]
+            tsr = self.norm_func(outimg.astype(np.float32))
         else:
             outimg = cv2.cvtColor(rszimg, cv2.COLOR_BGR2RGB)
-        tsr = self.norm_func(outimg.astype(np.float32))
-        tsr = np.transpose(tsr, axes=(2, 0, 1))
-        np.ascontiguousarray(tsr, dtype=np.float32)
+            tsr = self.norm_func(outimg.astype(np.float32))
+            tsr = np.transpose(tsr, axes=(2, 0, 1))
+        tsr = np.ascontiguousarray(tsr, dtype=np.float32)
         return tsr
 
     def __call__(self, data_dict):
@@ -39,7 +40,9 @@ class imgbase_transform_base:
         }
         if self.if_train:
             tar_dict = self.tar_transform(data_dict)
+            gt_dict = self.gt_transform(data_dict)
             out_data_dict.update(tar_dict)
+            out_data_dict.update(gt_dict)
         else:
             gt_dict = self.gt_transform(data_dict)
             out_data_dict.update(gt_dict)

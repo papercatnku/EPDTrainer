@@ -2,13 +2,38 @@ import os
 import sys
 from loguru import logger
 from easydict import EasyDict
+from time import localtime
 
+def get_timetag():
+    t = localtime()
+    timetag = '%d%.2d%.2d%.2d%.2d%.2d' % (
+        t.tm_year,
+        t.tm_mon,
+        t.tm_mday,
+        t.tm_hour,
+        t.tm_min,
+        t.tm_sec)
+
+    return timetag
 
 def setup_log(log_dir):
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, 'execution@{time}.log')
     logger.add(log_path)
     return
+
+
+def is_img_fn(src_path):
+    post = src_path[src_path.rfind('.'):]
+    if post.lower() in [
+        '.jpg',
+        '.jpeg',
+        '.png',
+        '.bmp',
+    ]:
+        return True
+
+    return False
 
 
 def get_subfiles(path, length=None):
@@ -58,4 +83,4 @@ def load_config(filename):
 
 
 def stastics_detail(stastic_dict):
-    return ', '.join([f'{k}: {v:>8.5f}' for k, v in stastic_dict.items()])
+    return ', '.join([f'{k}: {v:>8.5f}\t' for k, v in stastic_dict.items()])

@@ -51,7 +51,7 @@ class SeqTsfDataset(torch.torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         out_data = self.ds[idx]
-        for tsf in self.tsf:
+        for tsf in self.tsf_seq:
             out_data = tsf(out_data)
         return out_data
 

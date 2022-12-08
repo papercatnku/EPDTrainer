@@ -11,6 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 class trainer_base:
     def __init__(self, args):
+        self.args = args
         self.load_config(args)
         self.init_model()
         if self.config.schema == 'train':
@@ -100,6 +101,7 @@ class trainer_base:
             self.config.sw.batch_viz_step = self.checkpoint.get(
                 'config', {}).get('sw', {}).get('batch_viz_step', 0)
 
+        logger.info(f'args: {self.args}')
         logger.info(
             f'config: {json.dumps(self.config, indent=2)}')
 
@@ -131,7 +133,14 @@ class trainer_base:
             if self.pretrained:
                 model.load_state_dict(self.pretrained)
                 pass
-            self.model = nn.DataParallel(model).to(self.device)
+            if self.config.use_cuda:
+                self.model = nn.DataParallel(model).cuda(self.device)
+                # self.model.cuda(self.device)
+            else:
+                self.model = model
+            # self.model = nn.DataParallel(model).to(self.device)
+            # self.model = model
+
             self.optimizer = create_optimizer(
                 self.model, self.checkpoint, self.config, self.funcs)
 
@@ -153,6 +162,8 @@ class trainer_base:
 
         # loss
         self.loss = self.funcs.create_losses(self.config)
+        if self.config.use_cuda:
+            self.loss.cuda()
 
         self.scheduler = create_scheduler(
             self.optimizer, self.checkpoint, self.config, self.funcs)
@@ -166,7 +177,6 @@ class trainer_base:
         self.train_visualizer, self.validate_visualizer = self.funcs.creater_visualizer(
             self.config)
 
-        #
         self.train_dl, self.validate_dl = self.funcs.create_data_loader(
             self.config)
 

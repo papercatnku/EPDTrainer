@@ -52,6 +52,7 @@ class trainer_static(trainer_base):
             if self.config.use_cuda:
                 batch_data_dict = push_cuda_data(batch_data_dict)
             inf_data = self.netinf_in_adapt(batch_data_dict)
+
             pred = self.model(
                 *inf_data)
             pred_dict = self.netinf_out_adapt(pred)
@@ -89,7 +90,8 @@ class trainer_static(trainer_base):
                 'loss_train', batch_loss_dict, global_step=self.cur_iter)
 
             if self.config.sw.show_graph:
-                self.sw.add_graph(self.model.module, inf_data)
+                self.sw.add_graph(self.model.module, [
+                                  x.detach() for x in inf_data])
                 self.config.sw.show_graph = False
 
             if (i != 0 and self.config.sw.num_log_per_epoch != 0 and i % num_log_step == 0):
@@ -183,16 +185,15 @@ class trainer_static(trainer_base):
             if self.config.use_cuda:
                 batch_data_dict = push_cuda_data(batch_data_dict)
             inf_data = self.netinf_in_adapt(batch_data_dict)
-            pred = self.model(
-                *inf_data)
-            pred_dict = self.netinf_out_adapt(pred)
-            loss_dict = self.loss(
-                pred_dict,
-                batch_data_dict
-            )
-            for k, v in loss_dict.items():
-                epoch_avg_loss[k] += v.mean().item()
-            pass
+            with torch.no_grad():
+                pred = self.model(*inf_data)
+                pred_dict = self.netinf_out_adapt(pred)
+                loss_dict = self.loss(
+                    pred_dict,
+                    batch_data_dict
+                )
+                for k, v in loss_dict.items():
+                    epoch_avg_loss[k] += v.mean().item()
 
             if (self.validate_decoder and self.validate_evaluator):
                 decoded_res = self.validate_decoder(pred_dict)
